@@ -6,8 +6,16 @@
 #
 # For this reason, this module should usually be conditionally included,
 # so that it is not present/used on the machine started from the image.
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
 
-  environment.etc."nixos/configuration.nix".source = ./configuration.nix;
+  # Just like the installer does it:
+  # https://github.com/NixOS/nixpkgs/blob/f0f040c3f7f07fa4dc28b32d44e1db78fa3a0cc1/nixos/modules/installer/cd-dvd/channel.nix#L34
+  boot.postBootCommands = lib.mkAfter ''
+    if ! [ -e /var/lib/nixos/did-initial-configuration-copy ]; then
+      echo "Creating intial configuration.nix"
+      cp ${./configuration.nix} /etc/nixos/configuration.nix
+      touch /var/lib/nixos/did-initial-configuration-copy
+    fi
+  '';
 
 }
