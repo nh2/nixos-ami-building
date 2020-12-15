@@ -15,5 +15,13 @@
     wget
   ];
 
+  # Open ports in the firewall.
+  networking.firewall.allowedTCPPorts = [
+    80 # nginx
+    443 # nginx
+  ];
+  networking.firewall.allowedUDPPorts = [
+  ];
+
   services.nginx.enable = true;
 }
