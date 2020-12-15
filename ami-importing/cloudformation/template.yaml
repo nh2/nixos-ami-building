@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Bucket and roles for VM import
+Resources:
+  VMImportBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  VMImportExportServiceRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: vmimport
+      Description: Service role for VM import/export
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: vmie.amazonaws.com
+            Action: sts:AssumeRole
+            Condition:
+              StringEquals:
+                sts:Externalid: vmimport
+      Policies:
+        - PolicyName: vmimport
+          PolicyDocument:
+            Version: 2012-10-17
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetBucketLocation
+                  - s3:GetObject
+                  - s3:ListBucket
+                Resource:
+                  - !GetAtt VMImportBucket.Arn
+                  - !Sub "${VMImportBucket.Arn}/*"
+              - Effect: Allow
+                Action:
+                  - ec2:ModifySnapshotAttribute
+                  - ec2:CopySnapshot
+                  - ec2:RegisterImage
+                  - ec2:Describe*
+                Resource: "*"

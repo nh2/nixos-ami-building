@@ -1,0 +1,43 @@
+{
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "ami_name": "nixos-packer-example {{timestamp}}",
+      "instance_type": "t2.micro",
+      "launch_block_device_mappings": [
+        {
+          "device_name": "/dev/sda1",
+          "volume_size": 40,
+          "volume_type": "gp2",
+          "delete_on_termination": true
+        }
+      ],
+      "ssh_username": "root",
+      "source_ami_filter": {
+        "filters": {
+          "architecture": "x86_64"
+        },
+        "most_recent": true,
+        "owners": [
+          "080433136561"
+        ]
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "../nixos/configuration.nix",
+      "destination": "/tmp/"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "mv /tmp/configuration.nix /etc/nixos/configuration.nix",
+        "nixos-rebuild switch --upgrade",
+        "nix-collect-garbage -d",
+        "rm -rf /etc/ec2-metadata /etc/ssh/ssh_host_* /root/.ssh"
+      ]
+    }
+  ]
+}
