@@ -60,9 +60,7 @@ In contrast to the previous methods, this requires having set up `~/.aws/credent
 It starts the official NixOS AMI, applies your `configuration.nix`, and snapshots the result into a new AMI.
 You can read a basic Packer tutorial [here](https://learn.hashicorp.com/tutorials/packer/getting-started-build-image).
 
-I've saved jackkelly's Packer config in `./packer/nixos-packer-example.json`, and modified it to give the machine that does the AMI building a larger disk, to not run out of disk space. The config uses `"most_recent": true` to select the most recent official NixOS image as a base.
-
-**TODO:** With the increased disk space, the Packer-started VM does not boot.
+I've saved jackkelly's Packer config in `./packer/nixos-packer-example.json`, and modified it to give the machine that does the AMI building a larger disk, to not run out of disk space (making sure that the `device_name` is the one for the root device of that instance type). The config uses `"most_recent": true` to select the most recent official NixOS image as a base.
 
 In the below, replace `AWS_REGION=eu-central-1` by the region to create the AMI in.
 
