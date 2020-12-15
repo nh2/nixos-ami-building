@@ -145,3 +145,8 @@ After this, you should find the AMI in your EC2 AMI list.
   ```
 
 </details>
+
+
+## Attribution
+
+This work was sponsored by [Tyler Technologies](https://www.tylertech.com/) and [FP Complete](https://www.fpcomplete.com/).
