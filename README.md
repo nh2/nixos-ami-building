@@ -86,13 +86,13 @@ Steps to upload the AMI:
 
 1. Open CloudFormation in the AWS console, and import `./ami-importing/cloudformation/template.yaml` into it. This creates an S3 bucket for you.
   * Be aware that the bucket is created in the AWS region that you've currently chosen (in the top right). Note down that region.
-2. Open S3 in the AWS console, and figure out the name of the created S3 bucket.
+1. Open S3 in the AWS console, and figure out the name of the created S3 bucket.
    It should look like `nixos-ami-building-vmimportbucket-prf5j5yydsx3`.
-4. Edit `./ami-importing/create-amis.sh`, replacing:
+1. Edit `./ami-importing/create-amis.sh`, replacing:
   * the `home_region=` variable by the region that you created your bucket in
   * the `bucket=` variable by your bucket name
-3. Configure your `~/.aws/credentials` file so that the `aws` CLI utility has access to your AWS account. (This is outside the scope of this README, but easy to find docs for.)
-4. Run the script (replace the path to the dir containing the AMI `.vhd` by your own):
+1. Configure your `~/.aws/credentials` file so that the `aws` CLI utility has access to your AWS account. (This is outside the scope of this README, but easy to find docs for.)
+1. Run the script (replace the path to the dir containing the AMI `.vhd` by your own):
 
     ```sh
     NIX_PATH=nixpkgs=$HOME/src/nixpkgs \
@@ -108,6 +108,9 @@ Steps to upload the AMI:
     </details>
 
 After this, you should find the AMI in your EC2 AMI list.
+
+Note that the `create-amis.sh` remembers in the configured `state_dir=` which images were already uploaded.
+If you want to re-build an AMI from the same nixpkgs version (but e.g. different `configuration.nix`), you have to delete ("Deregister") the AMI on EC2, and wipe `state_dir=` (thus, by default, `rm -r ~/amis`). Otherwise the script will be a no-op.
 
 
 ### Troubleshooting
@@ -130,9 +133,10 @@ After this, you should find the AMI in your EC2 AMI list.
    System: x86_64-linux
    Amazon Arch: x86_64
   Checking for image on S3
-  2020-12-14 22:28:29 1506129408 nixos-amazon-image-20.09.git.6608ea8eb6a-x86_64-linux.vhd
-  Importing image from S3 path s3://nixos-ami-building-vmimportbucket-prf5j5yydsx3/nix/store/fqai90z1wl2blxchf7hzbbjk02zis8w7-nixos-amazon-image-20.09.git.6608ea8eb6a-x86_64-linux/nixos-amazon-image-20.09.git.6608ea8eb6a-x86_64-linux.vhd
-  Waiting for import task import-snap-0775c26f8f757319d to be completed
+  Image missing from aws, uploading
+  upload: ../../../../nix/store/6blb4hdpjyfi0ysd169sw7y7p17l3idh-nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux/nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux.vhd to s3://nixos-ami-building-vmimportbucket-prf5j5yydsx3/nix/store/6blb4hdpjyfi0ysd169sw7y7p17l3idh-nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux/nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux.vhd
+  Importing image from S3 path s3://nixos-ami-building-vmimportbucket-prf5j5yydsx3/nix/store/6blb4hdpjyfi0ysd169sw7y7p17l3idh-nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux/nixos-amazon-image-20.09beta-111781.gfedcba-x86_64-linux.vhd
+  Waiting for import task import-snap-0054ec2e7d6bf866d to be completed
    ... state=active progress=2 snapshot_id=null
    [..]
    ... state=active progress=94 snapshot_id=snap-0054ec2e7d6bf866d
