@@ -1,8 +1,8 @@
 # Methods for building custom NixOS AMIs
 
-This project demostrates various ways to build a custom NixOS AMI from a `configuration.nix` file.
+This project demonstrates various ways to build a custom NixOS AMI from a `configuration.nix` file.
 
-It is largely excercises the methods shown in jackkelly's blog post
+It largely exercises the methods shown in jackkelly's blog post
 http://jackkelly.name/blog/archives/2020/08/30/building_and_importing_nixos_amis_on_ec2/.
 
 ## Overview
@@ -50,7 +50,7 @@ NIX_PATH=nixpkgs=$HOME/src/nixpkgs \
 
 This prints to stdout the path to a subdir of the dir containing the AMI (you have to strip the last 2 dirs off it to get to the `.vhd` file's dir).
 
-The inner `nix-build` builts `nixos-generators` itself, and then we invoke its `nixos-generate` binary.
+The inner `nix-build` builds `nixos-generators` itself, and then we invoke its `nixos-generate` binary.
 It picks up our `nixos/configuration.nix` by file naming conventions.
 
 
@@ -60,7 +60,7 @@ In contrast to the previous methods, this requires having set up `~/.aws/credent
 It starts the official NixOS AMI, applies your `configuration.nix`, and snapshots the result into a new AMI.
 You can read a basic Packer tutorial [here](https://learn.hashicorp.com/tutorials/packer/getting-started-build-image).
 
-I've saved jackkelly's Packer config in `./packer/nixos-packer-example.json`, and modified it to give the machine that does the AMI building a larger disk, to not run out of disk space (making sure that the `device_name` is the one for the root device of that instance type). The config uses `"most_recent": true` to select the most recent official NixOS image as a base.
+I've saved jackkelly's Packer config in [./packer/nixos-packer-example.json](./packer/nixos-packer-example.json), and modified it to give the machine that does the AMI building a larger disk, to not run out of disk space (making sure that the `device_name` is the one for the root device of that instance type). The config uses `"most_recent": true` to select the most recent official NixOS image as a base.
 
 In the below, replace `AWS_REGION=eu-central-1` by the region to create the AMI in.
 
@@ -69,7 +69,7 @@ NIX_PATH=nixpkgs=$HOME/src/nixpkgs \
   nix-shell --pure -p packer --run 'cd packer/ && AWS_REGION=eu-central-1 packer build nixos-packer-example.json'
 ```
 
-With the Packer method you do not need import the AMI into EC2; Packer already does that for you.
+With the Packer method you do not need to import the AMI into EC2; Packer already does that for you.
 
 
 ## Importing built AMIs into EC2
@@ -80,7 +80,7 @@ I then downloaded [this version of the nixpkgs `create-amis.sh` script](https://
 
 > to comment out the calls to `make_image_public`, and also comment out the loop in upload_all that iterates across the regions
 
-The result is in this repo under `./ami-importing/create-amis.sh`.
+The result is in this repo under [./ami-importing/create-amis.sh](./ami-importing/create-amis.sh).
 
 Steps to upload the AMI:
 
